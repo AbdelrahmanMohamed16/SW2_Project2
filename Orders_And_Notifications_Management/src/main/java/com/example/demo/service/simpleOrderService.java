@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class simpleOrderService {
-    public Order addOrder(simpleOrder order){
+    public Order placeOrder(simpleOrder order){
         if(order!=null){
             // SET ID
             order.setID(Integer.toString(inMemory.Orders.size()+1));

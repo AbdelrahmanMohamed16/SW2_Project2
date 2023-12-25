@@ -14,8 +14,8 @@ public class simpleOrderController {
     @Autowired
     simpleOrderService orderService;
     @PostMapping("/simpleOrder")
-    public Order addOrder(@RequestBody simpleOrder o){
-        Order res = orderService.addOrder(o) ;
+    public Order placeOrder(@RequestBody simpleOrder o){
+        Order res = orderService.placeOrder(o) ;
         if(res != null){
             return res ;
         }
@@ -24,8 +24,18 @@ public class simpleOrderController {
     @PostMapping("/simpleOrder/{orderID}/{productID}")
     public Order addProduct(@PathVariable("orderID") String OID,@PathVariable("productID") String PID){
         // TODO: REMOVE THIS
-        inMemory.Products.put("10",new Product("10","cola"));
+        // inMemory.Products.put("10",new Product("10","cola"));
         boolean res = orderService.addProduct(OID,PID) ;
+        if(res){
+            return orderService.getOrder(OID);
+        }
+        return null;
+    }
+    @DeleteMapping("/simpleOrder/{orderID}/{productID}")
+    public Order removeProduct(@PathVariable("orderID") String OID,@PathVariable("productID") String PID){
+        // TODO: REMOVE THIS
+        // inMemory.Products.put("10",new Product("10","cola"));
+        boolean res = orderService.removeProduct(OID,PID) ;
         if(res){
             return orderService.getOrder(OID);
         }

@@ -15,6 +15,9 @@ public class compoundOrder implements Order {
     public compoundOrder(){
 
     }
+    public void setID(String id){
+        this.ID = "C"+id ;
+    }
     @Override
     public double calcCost() {
         double sum = 0 ;

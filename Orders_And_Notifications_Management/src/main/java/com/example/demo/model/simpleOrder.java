@@ -9,7 +9,7 @@ public class simpleOrder implements Order  {
     public String ID ;
     @JsonProperty("userId")
     public String Customer ;
-
+    @JsonProperty("Product")
     public ArrayList<Product> Products ;
 
     public double Cost ;
