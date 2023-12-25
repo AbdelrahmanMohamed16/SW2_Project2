@@ -1,15 +1,35 @@
 package com.example.demo.model;
 
-public class User {
-       private String ID ;
-       private String Name ;
-       private double Balance ;
-       private String Email ;
-       private String mobileNumber ;
-       private String Language ;
+import com.example.demo.Repo.inMemory;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-       private double Longitude ;
-       private double Latitude ;
+public class User {
+    @JsonProperty("ID")
+    private String ID;
+
+    @JsonProperty("Name")
+    private String Name;
+
+    @JsonProperty("Balance")
+    private double Balance;
+
+    @JsonProperty("Email")
+    private String Email;
+
+    @JsonProperty("mobileNumber")
+    private String mobileNumber;
+
+    @JsonProperty("Language")
+    private String Language;
+
+    @JsonProperty("Password")
+    private String Password;
+
+    @JsonProperty("Longitude")
+    private double Longitude;
+
+    @JsonProperty("Latitude")
+    private double Latitude;
 
     public User(){
 
@@ -23,6 +43,10 @@ public class User {
         Language = language;
         Longitude = longitude;
         Latitude = latitude;
+    }
+
+    public boolean checkPassword(String id , String password){
+        return inMemory.persons.get(id).Password.equals(password);
     }
     public String getID() {
         return ID;
@@ -87,4 +111,9 @@ public class User {
     public void setLatitude(double latitude) {
         Latitude = latitude;
     }
+
+    private String getPassword() {
+        return Password;
+    }
+
 }
