@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
@@ -19,6 +20,7 @@ public class UserController {
     public Response signUp(@RequestBody User user) {
         boolean done = userService.addUser(user);
         Response response = new Response();
+        System.out.println(inMemory.persons.get("user123"));
         if (!done) {
             response.setStatus(false);
             response.setMessage("this account already exist");
@@ -38,7 +40,7 @@ public class UserController {
         if (acc != null) {
             if (acc.checkPassword(id, password)) {
                 response.setStatus(true);
-                response.setMessage("login successfully , hello " + acc.getName());
+                response.setMessage("login successfully , hello " + acc.Name);
                 return response;
             } else {
                 response.setStatus(false);
@@ -50,10 +52,11 @@ public class UserController {
             response.setMessage("you dont have account with id: " + id);
             return response;
         }
+
     }
 
-//    @GetMapping("/allUsers")
-//    public Map<String, User> allUsers() {
-//        return userService.getAllUsers();
-//    }
+    @GetMapping("/Users")
+    public Map<String, User> allUsers() {
+        return userService.getAllUsers();
+    }
 }

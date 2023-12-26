@@ -10,11 +10,11 @@ import java.util.Map;
 public class UserService {
     public boolean addUser(User user){
         try{
-            if(inMemory.persons.get(user.getID()) != null){
+            if(inMemory.persons.get(user.ID) != null){
                 return false;
             }
             else{
-                inMemory.persons.put(user.getID() , user);
+                inMemory.persons.put(user.ID , user);
                 return true;
             }
         }catch (Exception e){
@@ -32,7 +32,7 @@ public class UserService {
     }
 
 
-//    public Map<String, User> getAllUsers(){
-//        return inMemory.persons;
-//    }
+    public Map<String, User> getAllUsers(){
+        return inMemory.persons;
+    }
 }

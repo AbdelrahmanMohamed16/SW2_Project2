@@ -5,31 +5,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
     @JsonProperty("ID")
-    private String ID;
+    public String ID;
 
     @JsonProperty("Name")
-    private String Name;
+    public String Name;
 
     @JsonProperty("Balance")
-    private double Balance;
+    public double Balance;
 
     @JsonProperty("Email")
-    private String Email;
+    public String Email;
 
     @JsonProperty("mobileNumber")
-    private String mobileNumber;
+    public String mobileNumber;
 
     @JsonProperty("Language")
-    private String Language;
+    public String Language;
 
     @JsonProperty("Password")
     private String Password;
 
     @JsonProperty("Longitude")
-    private double Longitude;
+    public double Longitude;
 
     @JsonProperty("Latitude")
-    private double Latitude;
+    public double Latitude;
 
     public User(){
 
@@ -48,64 +48,37 @@ public class User {
     public boolean checkPassword(String id , String password){
         return inMemory.persons.get(id).Password.equals(password);
     }
-    public String getID() {
-        return ID;
-    }
 
     public void setID(String ID) {
         this.ID = ID;
-    }
-
-    public String getName() {
-        return Name;
     }
 
     public void setName(String name) {
         Name = name;
     }
 
-    public double getBalance() {
-        return Balance;
-    }
-
     public void setBalance(double balance) {
         Balance = balance;
     }
 
-    public String getEmail() {
-        return Email;
-    }
 
     public void setEmail(String email) {
         Email = email;
     }
 
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getLanguage() {
-        return Language;
-    }
 
     public void setLanguage(String language) {
         Language = language;
     }
 
-    public double getLongitude() {
-        return Longitude;
-    }
 
     public void setLongitude(double longitude) {
         Longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return Latitude;
     }
 
     public void setLatitude(double latitude) {

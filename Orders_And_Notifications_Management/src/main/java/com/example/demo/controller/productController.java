@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class productController {
     @Autowired
     productService service ;
@@ -15,18 +16,18 @@ public class productController {
     public productController(productService service) {
         this.service = service;
     }
-    @PostMapping(value = "/addProduct")
+    @PostMapping(value = "/products")
     public String addProduct(@RequestBody Product p)
     {
 
         return service.addProduct(p);
     }
-    @GetMapping(value = "/getRemainingCategory/{Name}")
+    @GetMapping(value = "/RemainingCategory/{Name}")
     public int getRemainingCategory(@PathVariable String Name)
     {
         return service.getRemainingCategory(Name);
     }
-    @GetMapping(value = "/getAllProducts")
+    @GetMapping(value = "/products")
     public List<Product> getAllProducts() {
         return service.getAllProducts();
     }
