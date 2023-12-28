@@ -4,8 +4,8 @@ import com.example.demo.Repo.inMemory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
-    @JsonProperty("ID")
-    public String ID;
+//    @JsonProperty("ID")
+//    public String ID;
 
     @JsonProperty("Name")
     public String Name;
@@ -31,11 +31,11 @@ public class User {
     @JsonProperty("Latitude")
     public double Latitude;
 
+    public boolean isLoggedUser = false;
     public User(){
 
     }
-    public User(String ID, String name, double balance, String email, String mobileNumber, String language, double longitude, double latitude) {
-        this.ID = ID;
+    public User(String name, double balance, String email, String mobileNumber, String language, double longitude, double latitude) {
         Name = name;
         Balance = balance;
         Email = email;
@@ -49,9 +49,9 @@ public class User {
         return inMemory.persons.get(id).Password.equals(password);
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
-    }
+//    public void setID(String ID) {
+//        this.ID = ID;
+//    }
 
     public void setName(String name) {
         Name = name;

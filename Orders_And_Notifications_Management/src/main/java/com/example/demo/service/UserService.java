@@ -10,11 +10,11 @@ import java.util.Map;
 public class UserService {
     public boolean addUser(User user){
         try{
-            if(inMemory.persons.get(user.ID) != null){
+            if(inMemory.persons.get(user.Email) != null){
                 return false;
             }
             else{
-                inMemory.persons.put(user.ID , user);
+                inMemory.persons.put(user.Email , user);
                 return true;
             }
         }catch (Exception e){
@@ -22,9 +22,9 @@ public class UserService {
             return false;
         }
     }
-    public User checkUserExist(String id){
+    public User checkUserExist(String email){
         try {
-            return inMemory.persons.get(id);
+            return inMemory.persons.get(email);
         } catch (Exception e) {
             System.out.println("Exception in checkUserExist as" + e.getMessage());
         }
