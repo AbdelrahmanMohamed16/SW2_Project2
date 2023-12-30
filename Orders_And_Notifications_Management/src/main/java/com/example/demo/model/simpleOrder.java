@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
-public class simpleOrder implements Order  {
-    public String ID ;
+public class simpleOrder extends Order  {
     @JsonProperty("userId")
     public String Customer ;
     @JsonProperty("Product")
@@ -61,5 +60,10 @@ public class simpleOrder implements Order  {
     @Override
     public boolean removeOrder(String o) {
         return false;
+    }
+
+    @Override
+    public ArrayList<simpleOrder> getProducts() {
+        return null;
     }
 }
