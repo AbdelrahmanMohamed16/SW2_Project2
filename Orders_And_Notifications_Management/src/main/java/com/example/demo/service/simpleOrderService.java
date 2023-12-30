@@ -1,8 +1,14 @@
 package com.example.demo.service;
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 @Service
@@ -98,5 +104,37 @@ public class simpleOrderService {
     }
     public User checkOrderCustomer(simpleOrder order){
         return inMemory.persons.get(order.Customer);
+    }
+    public boolean cancelPlacedOrder(String OID){
+        // place simple
+        // place compound
+        Order order = null;
+        if (inMemory.Orders.containsKey(OID)) {
+            order = inMemory.Orders.get(OID);
+            if (order != null) {
+                order.refundCost(order.getCost());
+                inMemory.Orders.remove(OID);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean cancelShippingOrder(@Value("${shipping.maxDuration}") Long shippingMaxDuration, String OID){
+        // shipping simple
+        // shipping compound
+        Order order = null;
+        if (inMemory.shippingOrders.containsKey(OID)) {
+            order = inMemory.shippingOrders.get(OID);
+            if (order != null) {
+                if ((order.shipmentDate - Instant.now().toEpochMilli()) <= shippingMaxDuration) {
+                    order.refundCost(order.getCost());
+                    order.refundCost(order.getshippingFees());
+                    inMemory.shippingOrders.remove(OID);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

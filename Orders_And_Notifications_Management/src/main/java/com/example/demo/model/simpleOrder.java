@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.example.demo.Repo.inMemory;
 
 import java.util.ArrayList;
 
@@ -10,11 +11,6 @@ public class simpleOrder extends Order  {
     public String Customer ;
     @JsonProperty("Product")
     public ArrayList<Product> Products ;
-
-    public double Cost ;
-
-    // TODO: implement this feature
-    public double shippingFees;
 
     public simpleOrder(String id , String c ,ArrayList<Product> p){
         this.ID = "S"+id ;
@@ -63,7 +59,20 @@ public class simpleOrder extends Order  {
     }
 
     @Override
-    public ArrayList<simpleOrder> getProducts() {
-        return null;
+    public ArrayList<Product> getProducts() {
+        return Products;
+    }
+
+    @Override
+    public void deductCost(double Money) {
+        User customer = inMemory.persons.get(Customer);
+        customer.Balance -= Money;
+
+    }
+
+    @Override
+    public void refundCost(double Money) {
+        User customer = inMemory.persons.get(Customer);
+        customer.Balance += Money;
     }
 }
