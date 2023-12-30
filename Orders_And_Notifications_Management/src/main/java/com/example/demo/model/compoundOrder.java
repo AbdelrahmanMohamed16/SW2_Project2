@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.ArrayList;
 
-public class compoundOrder implements Order {
-    public String ID ;
+public class compoundOrder extends Order {
     @JsonProperty("orders")
     @JsonDeserialize(contentAs = simpleOrder.class)
     public ArrayList<simpleOrder> Orders ;
@@ -48,6 +47,12 @@ public class compoundOrder implements Order {
         }
         return false;
     }
+
+    @Override
+    public ArrayList<Product> getProducts() {
+        return null;
+    }
+
     private Order getOrder(String oID){
         for (int i = 0; i < Orders.size(); i++) {
             if(oID.equals((  (simpleOrder)Orders.get(i)).ID )){
@@ -56,4 +61,6 @@ public class compoundOrder implements Order {
         }
         return  null;
     }
+
+
 }

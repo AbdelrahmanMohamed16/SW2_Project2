@@ -63,7 +63,7 @@ public class simpleOrder extends Order  {
     }
 
     @Override
-    public ArrayList<simpleOrder> getProducts() {
-        return null;
+    public ArrayList<Product> getProducts() {
+        return Products;
     }
 }
