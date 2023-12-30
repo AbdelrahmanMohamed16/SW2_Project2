@@ -14,8 +14,8 @@ public class compoundOrderController {
     compoundOrderService orderService;
 
     @PostMapping("/compoundOrder")
-    public Order placeOrder() {
-        Order res = orderService.placeOrder() ;
+    public Order placeOrder(@RequestBody compoundOrder o) {
+        Order res = orderService.placeOrder(o) ;
         return res ;
     }
 

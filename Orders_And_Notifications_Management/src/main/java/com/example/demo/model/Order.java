@@ -1,13 +1,7 @@
 package com.example.demo.model ;
 
-import java.util.ArrayList;
-
-public abstract class  Order {
-    public String ID ;
-    abstract public double calcCost();
-    abstract public boolean addOrder(Order o);
-    abstract public boolean removeOrder(String oID);
-    abstract public ArrayList<simpleOrder> getProducts();
-    public String getID() {return this.ID;}
-
+public interface  Order {
+    public double calcCost();
+    public boolean addOrder(Order o);
+    public boolean removeOrder(String oID);
 }
