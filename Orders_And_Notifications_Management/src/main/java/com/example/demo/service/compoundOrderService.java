@@ -1,8 +1,9 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.Order;
-import com.example.demo.model.*;
+import com.example.demo.model.compoundOrder;
+import com.example.demo.model.simpleOrder;
 import org.springframework.stereotype.Service;
 
 @Service
