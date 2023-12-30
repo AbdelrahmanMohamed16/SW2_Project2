@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.Service;
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,20 @@ public class simpleOrderService {
             // add to Repo
             inMemory.Orders.put(order.ID, order);
             // return Order again
+            Channel ch = new Email();
+            if(ch instanceof Email)
+            {
+                int x= inMemory.mostUsedEmail.get(order.Customer);
+                inMemory.mostUsedEmail.put(order.Customer,++x);
+                inMemory.mostUsedPhoneAndEmail.put(order.Customer,++x);
+            }
+            else if(ch instanceof SMS)
+            {
+                String s = inMemory.persons.get(order.Customer).mobileNumber;
+                int x= inMemory.mostUsedPhone.get(s);
+                inMemory.mostUsedEmail.put(s,++x);
+                inMemory.mostUsedPhoneAndEmail.put(s,++x);
+            }
             return order;
         }
         return null;

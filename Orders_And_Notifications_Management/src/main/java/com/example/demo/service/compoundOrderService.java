@@ -1,9 +1,7 @@
-package com.example.demo.service;
+package com.example.demo.Service;
 
 import com.example.demo.Repo.inMemory;
-import com.example.demo.model.Order;
-import com.example.demo.model.compoundOrder;
-import com.example.demo.model.simpleOrder;
+import com.example.demo.model.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,6 +30,23 @@ public class compoundOrderService {
                         order.Orders.get(i).setID(ID);
                     }
 
+                }
+                for(int i = 0 ; i <order.Orders.size();i++)
+                {
+                    Channel ch = new Email();
+                    if(ch instanceof Email)
+                    {
+                        int x= inMemory.mostUsedEmail.get(order.Orders.get(i).Customer);
+                        inMemory.mostUsedEmail.put(order.Orders.get(i).Customer,++x);
+                        inMemory.mostUsedPhoneAndEmail.put(order.Orders.get(i).Customer,++x);
+                    }
+                    else if(ch instanceof SMS)
+                    {
+                        String s = inMemory.persons.get(order.Orders.get(i).Customer).mobileNumber;
+                        int x= inMemory.mostUsedPhone.get(s);
+                        inMemory.mostUsedEmail.put(s,++x);
+                        inMemory.mostUsedPhoneAndEmail.put(s,++x);
+                    }
                 }
                 // calc orders cost
                 order.calcCost();
@@ -67,4 +82,5 @@ public class compoundOrderService {
         }
         return o;
     }
+
 }

@@ -3,7 +3,7 @@ package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.service.simpleOrderService;
+import com.example.demo.Service.simpleOrderService;
 import com.example.demo.model.*;
 
 // TODO:REMOVE THIS BAD BEAHVEIOUR
