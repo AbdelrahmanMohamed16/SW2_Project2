@@ -1,10 +1,15 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.util.ArrayList;
 
 public class compoundOrder implements Order {
     public String ID ;
-    public ArrayList<Order> Orders ;
+    @JsonProperty("orders")
+    @JsonDeserialize(contentAs = simpleOrder.class)
+    public ArrayList<simpleOrder> Orders ;
     public double Cost ;
     public double shippingFees;
 
@@ -13,7 +18,7 @@ public class compoundOrder implements Order {
         Orders = new ArrayList<>();
     }
     public compoundOrder(){
-
+        Orders = new ArrayList<>();
     }
     public void setID(String id){
         this.ID = "C"+id ;
@@ -24,13 +29,13 @@ public class compoundOrder implements Order {
         for (int i = 0; i < Orders.size(); i++) {
             sum += Orders.get(i).calcCost();
         }
-        return sum ;
+        return Cost =  sum ;
     }
 
     @Override
     public boolean addOrder(Order o) {
         if(o != null) {
-           return Orders.add(o);
+           return Orders.add((simpleOrder) o);
         }
         return false;
     }

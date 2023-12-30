@@ -13,6 +13,7 @@ public class simpleOrder implements Order  {
     public ArrayList<Product> Products ;
 
     public double Cost ;
+
     // TODO: implement this feature
     public double shippingFees;
 
@@ -33,9 +34,9 @@ public class simpleOrder implements Order  {
     public double calcCost() {
         double sum = 0 ;
         for (int i = 0; i < Products.size(); i++) {
-            // sum += Products.get(i).getPrice();
+            sum += Products.get(i).getPrice();
         }
-        return sum ;
+        return Cost =  sum ;
     }
     public boolean addProduct(Product o) {
         if(o != null) {
