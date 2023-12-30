@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.service.simpleOrderService;
 import com.example.demo.model.*;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 public class simpleOrderController {
     @Autowired
     simpleOrderService orderService;
+    //TODO: DONE..!
     @PostMapping("/simpleOrder")
     public Order placeOrder(@RequestBody simpleOrder o){
 //        // TODO: REMOVE THIS
@@ -32,14 +34,14 @@ public class simpleOrderController {
 //                "12",
 //                new Product("cocoa", "12", "VendorA", inMemory.Categories.get("Fruits"), 300)
 //        );
-        //        // TODO: REMOVE THIS
-        inMemory.persons.get("john@example.com").isLoggedUser = true;
+
         Order res = orderService.placeOrder(o) ;
         if(res != null){
             return res ;
         }
         return null;
     }
+    //TODO: DONE..!
     @PostMapping("/simpleOrder/{orderID}/{productID}")
     public Order addProduct(@PathVariable("orderID") String OID,@PathVariable("productID") String PID){
 //        // TODO: REMOVE THIS
@@ -53,6 +55,7 @@ public class simpleOrderController {
         }
         return null;
     }
+    //TODO: DONE..!
     @DeleteMapping("/simpleOrder/{orderID}/{productID}")
     public Order removeProduct(@PathVariable("orderID") String OID,@PathVariable("productID") String PID){
         // TODO: REMOVE THIS
@@ -63,8 +66,19 @@ public class simpleOrderController {
         }
         return null;
     }
+    //TODO: DONE..!
     @GetMapping("/orders")
     public ArrayList<Order> getAllOrders(){
         return orderService.getAllOrders();
     }
+
+    @DeleteMapping("/placedOrder/{orderId}")
+    public boolean cancelPlaced(@PathVariable String orderId){
+        return orderService.cancelPlacedOrder(orderId);
+    }
+    @DeleteMapping("/shippingOrder/{orderId}")
+    public boolean cancelShipping(@PathVariable String orderId){
+        return orderService.cancelShippingOrder(orderId);
+    }
+
 }

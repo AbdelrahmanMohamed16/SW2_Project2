@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -47,6 +48,7 @@ public class compoundOrder extends Order {
     }
 
     @Override
+    @JsonIgnore
     public ArrayList<Product> getProducts() {
         return null;
     }
@@ -61,17 +63,15 @@ public class compoundOrder extends Order {
         return  null;
     }
 
-    @Override
-    public void deductCost(double Money) {
-        for (simpleOrder order : Orders){
-            order.deductCost(Money);
-        }
-    }
-
-    @Override
-    public void refundCost(double Money) {
-        for (simpleOrder order : Orders){
-            order.refundCost(order.getCost());
-        }
-    }
+//    public void deductCost(double Money) {
+//        for (simpleOrder order : Orders){
+//            order.deductCost(Money);
+//        }
+//    }
+//
+//    public void refundCost(double Money) {
+//        for (simpleOrder order : Orders){
+//            order.refundCost(order.getCost());
+//        }
+//    }
 }

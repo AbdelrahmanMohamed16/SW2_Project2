@@ -5,7 +5,6 @@ import com.example.demo.model.Order;
 import com.example.demo.model.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 
 @Service
 public class compoundOrderService {
@@ -21,10 +20,17 @@ public class compoundOrderService {
                     String ID ;
                     for (int i = 0; i < order.Orders.size(); i++) {
                         // Skip order with non-exist User
-                        if(serv.checkOrderCustomer(order.Orders.get(i)) == null){
+                        User u = serv.getOrderUser(order.Orders.get(i)) ;
+                        if(u == null){
                             order.Orders.remove(i);
+                            System.out.println("User not found..!");
                             i--;
                             continue;
+                        }
+                        if (i == 0 && !u.isLoggedUser) {
+                            // check first User is logged in
+                            System.out.println("not logged");
+                            return null;
                         }
                         serv.BuildOrder(order.Orders.get(i));
                         ID = (i + 1) + order.ID;
@@ -34,12 +40,18 @@ public class compoundOrderService {
                 }
                 // calc orders cost
                 order.calcCost();
+                // TODO: deduct cost from each User order
+                if(!deductCost(order,false)){
+                    System.out.println("low balance");
+                    return null;
+                }
                 // add to Repo
                 inMemory.Orders.put(order.ID, order);
                 // return Order again
                 return order;
             }
-            return null;
+        System.out.println("default line 53");
+        return null;
     }
     public boolean addOrder(String cOID, Order o){
         Order x =  inMemory.Orders.get(cOID) ;
@@ -58,12 +70,39 @@ public class compoundOrderService {
         }
         return ((compoundOrder)c).removeOrder(oID);
     }
-
     public Order getOrder(String COID){
         Order o =  inMemory.Orders.get(COID) ;
         if(!( o instanceof compoundOrder)){
             return null ;
         }
         return o;
+    }
+    static public boolean deductCost(compoundOrder order, boolean isShipping) {
+        simpleOrderService serv = new simpleOrderService();
+        for (int i = 0; i < order.Orders.size(); i++) {
+                if(isShipping){
+                    if(!serv.deductCost(order.Orders.get(i),order.shippingFees)){
+                        return false;
+                    }
+                }
+                else{
+                    if(!serv.deductCost(order.Orders.get(i),order.Orders.get(i).Cost)){
+                        return false;
+                    }
+                }
+        }
+        return true;
+    }
+    static public boolean refundCost(compoundOrder order, boolean isShipping) {
+        simpleOrderService serv = new simpleOrderService();
+        for (int i = 0; i < order.Orders.size(); i++) {
+            if(isShipping){
+                serv.refundCost(order.Orders.get(i),order.Orders.get(i).Cost+order.shippingFees);
+            }
+            else{
+                serv.refundCost(order.Orders.get(i),order.Orders.get(i).Cost);
+            }
+        }
+        return true;
     }
 }

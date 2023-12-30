@@ -1,15 +1,15 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.example.demo.Repo.inMemory;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.ArrayList;
 
+@JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
 public class simpleOrder extends Order  {
     @JsonProperty("userId")
     public String Customer ;
-    @JsonProperty("Product")
     public ArrayList<Product> Products ;
 
     public simpleOrder(String id , String c ,ArrayList<Product> p){
@@ -63,16 +63,4 @@ public class simpleOrder extends Order  {
         return Products;
     }
 
-    @Override
-    public void deductCost(double Money) {
-        User customer = inMemory.persons.get(Customer);
-        customer.Balance -= Money;
-
-    }
-
-    @Override
-    public void refundCost(double Money) {
-        User customer = inMemory.persons.get(Customer);
-        customer.Balance += Money;
-    }
 }
