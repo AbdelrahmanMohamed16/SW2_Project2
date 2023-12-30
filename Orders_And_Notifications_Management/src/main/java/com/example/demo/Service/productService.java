@@ -17,8 +17,6 @@ public class productService {
     {
 
         Category cat = p.getCat();
-        System.out.println(inMemory.Categories.size());
-        System.out.println(cat.getName());
         if(inMemory.Products.containsKey(p.getSerialNumber()))
         {
             return "this serialNumber of this product Found before ";

@@ -5,6 +5,8 @@ import com.example.demo.model.Order;
 import com.example.demo.model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Notification {
     private Channel channel;
