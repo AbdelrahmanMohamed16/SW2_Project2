@@ -9,7 +9,7 @@ import java.util.Date;
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
 public abstract class  Order {
     public String ID ;
-    public Long shipmentDate;
+    public long shipmentDate;
     public double Cost = 0;
     // TODO: This Feature
     public double shippingFees = 0;

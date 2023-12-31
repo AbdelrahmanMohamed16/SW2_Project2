@@ -1,10 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.Repo.inMemory;
-import com.example.demo.model.Order;
-import com.example.demo.model.User;
-import com.example.demo.model.compoundOrder;
-import com.example.demo.model.simpleOrder;
+import com.example.demo.model.*;
 import org.springframework.stereotype.Service;
 
 
@@ -52,6 +49,35 @@ public class compoundOrderService {
                 // add to Repo
                 inMemory.Orders.put(order.ID, order);
                 // return Order again
+                for(int i = 0 ; i <order.Orders.size();i++)
+                {
+                    Channel ch = new Email();
+                    if(ch instanceof Email)
+                    {
+                        if (inMemory.mostUsedEmail.containsKey(order.Orders.get(i).Customer)) {
+                            int x = inMemory.mostUsedEmail.get(order.Orders.get(i).Customer);
+                            inMemory.mostUsedEmail.put(order.Orders.get(i).Customer, ++x);
+                            inMemory.mostUsedPhoneAndEmail.put(order.Orders.get(i).Customer, ++x);
+                        }
+                        else {
+                            inMemory.mostUsedEmail.put(order.Orders.get(i).Customer, 1);
+                            inMemory.mostUsedPhoneAndEmail.put(order.Orders.get(i).Customer, 1);
+                        }
+                    }
+                    else if(ch instanceof SMS)
+                    {
+                        String s = inMemory.persons.get(order.Orders.get(i).Customer).mobileNumber;
+                        if (inMemory.mostUsedPhone.containsKey(s)) {
+                            int x = inMemory.mostUsedPhone.get(s);
+                            inMemory.mostUsedPhone.put(s, ++x);
+                            inMemory.mostUsedPhoneAndEmail.put(s, ++x);
+                        }
+                        else {
+                            inMemory.mostUsedPhone.put(s, 1);
+                            inMemory.mostUsedPhoneAndEmail.put(s, 1);
+                        }
+                    }
+                }
                 return order;
             }
 

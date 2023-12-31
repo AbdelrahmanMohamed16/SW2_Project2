@@ -43,6 +43,32 @@ public class simpleOrderService {
             // add to Repo
             inMemory.Orders.put(order.ID, order);
             // return Order again
+            Channel ch = new Email();
+            if(ch instanceof Email)
+            {
+                if (inMemory.mostUsedEmail.containsKey(order.Customer)) {
+                    int x = inMemory.mostUsedEmail.get(order.Customer);
+                    inMemory.mostUsedEmail.put(order.Customer, ++x);
+                    inMemory.mostUsedPhoneAndEmail.put(order.Customer, ++x);
+                }
+                else {
+                    inMemory.mostUsedEmail.put(order.Customer, 1);
+                    inMemory.mostUsedPhoneAndEmail.put(order.Customer, 1);
+                }
+            }
+            else if(ch instanceof SMS)
+            {
+                String s = inMemory.persons.get(order.Customer).mobileNumber;
+                if (inMemory.mostUsedPhone.containsKey(s)) {
+                    int x = inMemory.mostUsedPhone.get(s);
+                    inMemory.mostUsedPhone.put(s, ++x);
+                    inMemory.mostUsedPhoneAndEmail.put(s, ++x);
+                }
+                else {
+                    inMemory.mostUsedPhone.put(s, 1);
+                    inMemory.mostUsedPhoneAndEmail.put(s, 1);
+                }
+            }
             return order;
         }
         return null;
