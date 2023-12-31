@@ -22,8 +22,9 @@ public class shippingService {
     simpleOrderService simpleServ;
     @Autowired
     UserService userServ;
-    public String shipOrder( String ID)
+    public Response shipOrder( String ID)
     {
+        Response response = new Response();
           Order O = inMemory.Orders.get(ID);
           if(O!=null)
           {
@@ -33,7 +34,9 @@ public class shippingService {
                if (simpleOrder.class.isAssignableFrom(O.getClass()) ){
                   simpleOrder order = (simpleOrder) O;
                   if(!simpleServ.deductCost(order,O.shippingFees)){
-                      return "not sufficient balance";
+                      response.setStatus(false);
+                      response.setMessage("not sufficient balance");
+                      return response;
                   }
                   // increase EMAIL_or_SMS counter
                   userServ.SendShippingNotifications(order);
@@ -41,7 +44,9 @@ public class shippingService {
                else{
                   compoundOrder order = (compoundOrder) O;
                   if(!compServ.deductCost(order, true)){
-                      return "not sufficient balance";
+                      response.setStatus(false);
+                      response.setMessage("not sufficient balance");
+                      return response;
                   }
                   // increase EMAIL_or_SMS counter
                   userServ.SendShippingNotifications(order);
@@ -61,20 +66,22 @@ public class shippingService {
               inMemory.shippingOrders.put(O.ID,O);
               inMemory.Orders.remove(ID);
 
-
-               return "Order Added successfully ";
-
+              response.setStatus(true);
+              response.setMessage("Order Shipped successfully ");
+              return response;
 
           }
-          return "This order is not found! ";
+        response.setStatus(false);
+        response.setMessage("This order is not found! ");
+        return response;
     }
     public ArrayList<Order> getAllShippingOrders(){
         return new ArrayList<>(inMemory.shippingOrders.values()) ;
     }
-    public boolean cancelShippingOrder(String OID) {
+    public Response cancelShippingOrder(String OID) {
         // shipping simple
         // shipping compound
-
+        Response response = new Response();
         Order order = null;
         if (inMemory.shippingOrders.containsKey(OID)) {
             order = inMemory.shippingOrders.get(OID);
@@ -86,14 +93,20 @@ public class shippingService {
                         compServ.refundCost((compoundOrder) order, true);
                     }
                     inMemory.shippingOrders.remove(OID);
-                    return true;
+                    response.setStatus(true);
+                    response.setMessage("Shipping Order canceled successfully");
+                    return response;
                 }
                 else {
-                    return false;
+                    response.setStatus(false);
+                    response.setMessage("Sorry.. you are too late..Order Exit our Stock");
+                    return response;
                 }
             }
         }
-        return false;
+        response.setStatus(false);
+        response.setMessage("Order Not exist..Call customer Service");
+        return response;
     }
 
 }
