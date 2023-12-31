@@ -1,26 +1,26 @@
-package com.example.demo.service;
+package com.example.demo.service.Products;
 
-import com.example.demo.Repo.DataBase;
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.Category;
 import com.example.demo.model.Product;
 import com.example.demo.model.Response;
+import com.example.demo.service.Products.IproductService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
-public class productService {
-    public String addProduct(Product p)
+public class productService implements IproductService {
+    public Response addProduct(Product p)
     {
-        Response response
+        Response response = new Response();
         Category cat = p.getCat();
         if(inMemory.Products.containsKey(p.getSerialNumber()))
         {
-            return "this serialNumber of this product Found before ";
+            response.setStatus(false);
+            response.setMessage("this serialNumber of this product Found before ");
+            return response;
         }
         else if(inMemory.Categories.containsKey(cat.getName()))
         {
@@ -28,9 +28,13 @@ public class productService {
             int remainingParts = inMemory.Categories.get(cat.getName()).getRemainingParts()+p.quantity;
             inMemory.Categories.get(cat.getName()).setRemainingParts(remainingParts);
             inMemory.Products.put(p.getSerialNumber(),p);
-            return "Product Added Successfully!.";
+            response.setStatus(true);
+            response.setMessage("Product Added Successfully!.");
+            return response;
         }
-        return "this Category of this Product is not found ";
+        response.setStatus(false);
+        response.setMessage("this Category of this Product is not found ");
+        return response;
     }
     public Response getRemainingCategory(String Name) {
         Response message = new Response();

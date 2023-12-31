@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.User;
 
 import com.example.demo.Notification_Handler.Notification;
 import com.example.demo.Notification_Handler.PlacementNotification;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class UserService {
+public class UserService implements IuserService {
     public void SendPlacingNotifications(simpleOrder O){
         User u = inMemory.persons.get(O.Customer);
         Channel ch ;

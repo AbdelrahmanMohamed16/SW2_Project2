@@ -1,5 +1,6 @@
-package com.example.demo.service;
+package com.example.demo.service.Notifications;
 
+import com.example.demo.service.Notifications.INotifications;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.example.demo.Repo.inMemory;
@@ -7,7 +8,8 @@ import com.example.demo.Repo.inMemory;
 import java.util.Queue;
 
 @Service
-public class NotificationService {
+public class NotificationService implements INotifications {
+    @Override
     public String getMostUsedEmail()
     {
         int mx = -1 ;
@@ -25,6 +27,8 @@ public class NotificationService {
 
 
     }
+    @Override
+
     public String getMostUsedSMS()
     {
         int mx = -1 ;
@@ -40,6 +44,8 @@ public class NotificationService {
         }
         return number ;
     }
+    @Override
+
     public String getMostUsedSMSandEmail()
     {
         int mx = -1 ;
@@ -56,9 +62,13 @@ public class NotificationService {
         return email_or_number ;
 
     }
+    @Override
+
     public Queue getAllNotifications(){
         return inMemory.Notifications;
     }
+    @Override
+
     @Scheduled(fixedRate = 30000) // Run every 30 seconds
     public void notificationsSimulations(){
         // simulate it Send
@@ -67,6 +77,8 @@ public class NotificationService {
 
         }
     }
+    @Override
+
     public String getMostUsedTemplate(){
         int mx = -1 ;
         String temp="";
@@ -79,6 +91,6 @@ public class NotificationService {
                 temp = key;
             }
         }
-        return temp ;
+        return temp+" Template" ;
     }
 }

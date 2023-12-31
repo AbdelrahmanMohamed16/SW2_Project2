@@ -1,17 +1,15 @@
-package com.example.demo.service;
+package com.example.demo.service.Order;
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
-import com.example.demo.Notification_Handler.*;
 
+import com.example.demo.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
-import java.time.Instant;
-
 @Service
-public class simpleOrderService {
+public class simpleOrderService implements IOrderService {
     @Value("${shipping.maxDuration}")
     public long shippingMaxDuration;
     @Autowired
