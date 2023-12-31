@@ -34,7 +34,6 @@ public class simpleOrderController {
 //                "12",
 //                new Product("cocoa", "12", "VendorA", inMemory.Categories.get("Fruits"), 300)
 //        );
-
         Order res = orderService.placeOrder(o) ;
         if(res != null){
             return res ;
@@ -66,7 +65,6 @@ public class simpleOrderController {
         }
         return null;
     }
-    //TODO: DONE..!
     @GetMapping("/orders")
     public ArrayList<Order> getAllOrders(){
         return orderService.getAllOrders();
@@ -80,5 +78,4 @@ public class simpleOrderController {
     public boolean cancelShipping(@PathVariable String orderId){
         return orderService.cancelShippingOrder(orderId);
     }
-
 }

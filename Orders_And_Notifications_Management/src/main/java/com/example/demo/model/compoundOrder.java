@@ -10,6 +10,11 @@ public class compoundOrder extends Order {
     @JsonProperty("orders")
     @JsonDeserialize(contentAs = simpleOrder.class)
     public ArrayList<simpleOrder> Orders ;
+//<<<<<<< HEAD
+//=======
+//    public double Cost ;
+//    public double shippingFees;
+//>>>>>>> Notification
 
     public compoundOrder(String id){
         this.ID = "C"+id ;
@@ -53,7 +58,6 @@ public class compoundOrder extends Order {
         return null;
     }
 
-
     private Order getOrder(String oID){
         for (int i = 0; i < Orders.size(); i++) {
             if(oID.equals((  (simpleOrder)Orders.get(i)).ID )){
@@ -62,16 +66,4 @@ public class compoundOrder extends Order {
         }
         return  null;
     }
-
-//    public void deductCost(double Money) {
-//        for (simpleOrder order : Orders){
-//            order.deductCost(Money);
-//        }
-//    }
-//
-//    public void refundCost(double Money) {
-//        for (simpleOrder order : Orders){
-//            order.refundCost(order.getCost());
-//        }
-//    }
 }

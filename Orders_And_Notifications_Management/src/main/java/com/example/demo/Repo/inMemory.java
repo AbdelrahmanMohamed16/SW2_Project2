@@ -40,6 +40,31 @@ public class inMemory implements DataBase {
             );
         }
     };
+    public static Map<String, Integer> mostUsedEmail=new HashMap<>(){
+        {
+            put("Ahmed",3);
+            put("Mohamed",6);
+            put("ALi",4);
+            put("khaled",2);
+        }
+    };
+    public static Map<String, Integer> mostUsedPhone=new HashMap<>(){
+        {
+            put("Ahmed",3);
+            put("Mohamed",6);
+            put("ALi",4);
+            put("khaled",2);
+        }
+    };
+    public static Map<String, Integer> mostUsedPhoneAndEmail=new HashMap<>(){
+        {
+            put("Ahmed",3);
+            put("Mohamed",6);
+            put("ALi",4);
+            put("khaled",2);
+        }
+    };
+
 
 
 

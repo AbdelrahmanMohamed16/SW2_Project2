@@ -14,14 +14,15 @@ public abstract class  Order {
     // TODO: This Feature
     public double shippingFees = 0;
 
-
     abstract public double calcCost();
     abstract public boolean addOrder(Order o);
     abstract public boolean removeOrder(String oID);
     abstract public ArrayList<Product> getProducts();
+
     //public double getCost() {return this.Cost;}
    // public double getshippingFees() {return this.shippingFees;}
     //public String getID() {return this.ID;}
 
+    public String getID() {return this.ID;}
 
 }

@@ -3,6 +3,7 @@ import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class simpleOrderService {
         if(order!=null){
             // check if User exist
             User u = getOrderUser(order);
+
             if( u == null){
                 return null;
             }
@@ -152,7 +154,7 @@ public class simpleOrderService {
         }
         return false;
     }
-    public boolean cancelShippingOrder(String OID){
+    public boolean cancelShippingOrder(String OID) {
         // shipping simple
         // shipping compound
         Order order = null;
@@ -160,11 +162,10 @@ public class simpleOrderService {
             order = inMemory.shippingOrders.get(OID);
             if (order != null) {
                 if ((order.shipmentDate - Instant.now().toEpochMilli()) <= shippingMaxDuration) {
-                    if(order instanceof simpleOrder){
-                        refundCost((simpleOrder) order , order.Cost+ order.shippingFees);
-                    }
-                    else{
-                        compoundOrderService.refundCost((compoundOrder) order , true);
+                    if (order instanceof simpleOrder) {
+                        refundCost((simpleOrder) order, order.Cost + order.shippingFees);
+                    } else {
+                        compoundOrderService.refundCost((compoundOrder) order, true);
                     }
                     inMemory.shippingOrders.remove(OID);
                     return true;
@@ -172,5 +173,8 @@ public class simpleOrderService {
             }
         }
         return false;
+    }
+    public User checkOrderCustomer(simpleOrder order){
+        return inMemory.persons.get(order.Customer);
     }
 }

@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.Order;
-import com.example.demo.model.*;
+import com.example.demo.model.User;
+import com.example.demo.model.compoundOrder;
+import com.example.demo.model.simpleOrder;
 import org.springframework.stereotype.Service;
 
 
@@ -40,16 +42,19 @@ public class compoundOrderService {
                 }
                 // calc orders cost
                 order.calcCost();
+
                 // TODO: deduct cost from each User order
                 if(!deductCost(order,false)){
                     System.out.println("low balance");
                     return null;
                 }
+
                 // add to Repo
                 inMemory.Orders.put(order.ID, order);
                 // return Order again
                 return order;
             }
+
         System.out.println("default line 53");
         return null;
     }
