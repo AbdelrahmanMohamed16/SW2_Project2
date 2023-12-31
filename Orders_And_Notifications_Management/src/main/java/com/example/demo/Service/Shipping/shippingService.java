@@ -1,17 +1,19 @@
-package com.example.demo.service;
+package com.example.demo.service.Shipping;
 
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
+import com.example.demo.service.User.UserService;
+import com.example.demo.service.Order.compoundOrderService;
+import com.example.demo.service.Order.simpleOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Instant;
 import java.util.ArrayList;
 
 @Service
-public class shippingService {
+public class shippingService implements IshippingService {
     @Value("${shipping.Fee.Rate}")
     double startFee ;
     @Value("${shipping.maxDuration}")

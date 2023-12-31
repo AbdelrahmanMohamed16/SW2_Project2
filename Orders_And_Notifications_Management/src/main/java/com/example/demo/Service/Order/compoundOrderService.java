@@ -1,9 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.Order;
 
-import com.example.demo.Notification_Handler.Notification;
-import com.example.demo.Notification_Handler.PlacementNotification;
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
+import com.example.demo.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

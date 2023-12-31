@@ -1,19 +1,17 @@
-package com.example.demo.service;
+package com.example.demo.service.Products;
 
-import com.example.demo.Repo.DataBase;
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.Category;
 import com.example.demo.model.Product;
 import com.example.demo.model.Response;
+import com.example.demo.service.Products.IproductService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
-public class productService {
+public class productService implements IproductService {
     public Response addProduct(Product p)
     {
         Response response = new Response();
