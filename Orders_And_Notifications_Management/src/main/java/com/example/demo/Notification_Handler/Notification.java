@@ -15,7 +15,7 @@ public abstract class Notification {
     private String language;
 
     public Notification(Channel channel,String language) {
-        this.channel = channel;
+        this.channel  = channel;
         this.language = language;
     }
 

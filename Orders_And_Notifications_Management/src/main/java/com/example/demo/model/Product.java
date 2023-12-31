@@ -17,13 +17,17 @@ public class Product {
     @JsonProperty("price")
 
     private double price ;
+    @JsonProperty("quantity")
 
-    public Product(String name, String serialNumber, String vendor, Category cat, double price) {
+    public int quantity ;
+
+    public Product(String name, String serialNumber, String vendor, Category cat, double price,int quantity) {
         this.name = name;
         this.serialNumber = serialNumber;
         this.vendor = vendor;
         this.cat = cat;
         this.price = price;
+        this.quantity = quantity;
     }
 
     public String getName() {

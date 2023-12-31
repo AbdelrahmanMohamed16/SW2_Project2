@@ -1,56 +1,84 @@
 package com.example.demo.service;
 
-import com.example.demo.Repo.inMemory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import com.example.demo.Repo.inMemory;
+
+import java.util.Queue;
 
 @Service
 public class NotificationService {
     public String getMostUsedEmail()
     {
-        int mx = 0 ;
-        String user="";
-        for(String key : inMemory.mostUsedEmail.keySet())
+        int mx = -1 ;
+        String email="";
+        for(String key : inMemory.mostUsedPhoneAndEmail.keySet())
         {
-            if(inMemory.mostUsedEmail.get(key)>=mx)
+            int value = inMemory.mostUsedPhoneAndEmail.get(key) ;
+            if( value > mx && key.contains("@"))
             {
-                mx = inMemory.mostUsedEmail.get(key);
-                user = key;
+                mx = value;
+                email = key;
             }
         }
-        return user ;
+        return email ;
 
 
     }
     public String getMostUsedSMS()
     {
-        int mx = 0 ;
-        String user="";
-        for(String key : inMemory.mostUsedPhone.keySet())
+        int mx = -1 ;
+        String number="";
+        for(String key : inMemory.mostUsedPhoneAndEmail.keySet())
         {
-            if(inMemory.mostUsedPhone.get(key)>=mx)
+            int value = inMemory.mostUsedPhoneAndEmail.get(key) ;
+            if( value > mx && !key.contains("@"))
             {
-                mx = inMemory.mostUsedPhone.get(key);
-                user = key;
+                mx = value;
+                number = key;
             }
         }
-        return user ;
-
-
+        return number ;
     }
     public String getMostUsedSMSandEmail()
     {
-        int mx = 0 ;
-        String user="";
+        int mx = -1 ;
+        String email_or_number="";
         for(String key : inMemory.mostUsedPhoneAndEmail.keySet())
         {
-            if(inMemory.mostUsedPhoneAndEmail.get(key)>=mx)
+            int value = inMemory.mostUsedPhoneAndEmail.get(key) ;
+            if( value > mx)
             {
-                mx = inMemory.mostUsedPhoneAndEmail.get(key);
-                user = key;
+                mx = value;
+                email_or_number = key;
             }
         }
-        return user ;
+        return email_or_number ;
 
+    }
+    public Queue getAllNotifications(){
+        return inMemory.Notifications;
+    }
+    @Scheduled(fixedRate = 30000) // Run every 30 seconds
+    public void notificationsSimulations(){
+        // simulate it Send
+        if(inMemory.Notifications.size() != 0){
+            inMemory.Notifications.remove();
 
+        }
+    }
+    public String getMostUsedTemplate(){
+        int mx = -1 ;
+        String temp="";
+        for(String key : inMemory.MostUsedTemplate.keySet())
+        {
+            int value = inMemory.MostUsedTemplate.get(key) ;
+            if( value > mx)
+            {
+                mx = value;
+                temp = key;
+            }
+        }
+        return temp ;
     }
 }

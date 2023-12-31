@@ -2,85 +2,98 @@ package com.example.demo.service;
 
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.Instant;
+import java.util.ArrayList;
+
 @Service
 public class shippingService {
+    @Value("${shipping.Fee.Rate}")
+    double startFee ;
+    @Value("${shipping.maxDuration}")
+    public long shippingMaxDuration;
+    @Autowired
+    compoundOrderService compServ;
+    @Autowired
+    simpleOrderService simpleServ;
+    @Autowired
+    UserService userServ;
     public String shipOrder( String ID)
     {
           Order O = inMemory.Orders.get(ID);
           if(O!=null)
           {
                //calculate shipping
-               inMemory.shippingOrders.put(ID,inMemory.Orders.get(ID));
-               inMemory.Orders.remove(ID);
-               if(O instanceof simpleOrder)
-               {
-                   Channel ch = new Email();
-                   if(ch instanceof Email)
-                   {
-                       if (inMemory.mostUsedEmail.containsKey(((simpleOrder) O).Customer)) {
-                           int x = inMemory.mostUsedEmail.get(((simpleOrder) O).Customer);
-                           inMemory.mostUsedEmail.put(((simpleOrder) O).Customer, ++x);
-                           inMemory.mostUsedPhoneAndEmail.put(((simpleOrder) O).Customer, ++x);
-                       }
-                       else {
-                           inMemory.mostUsedEmail.put(((simpleOrder) O).Customer, 1);
-                           inMemory.mostUsedPhoneAndEmail.put(((simpleOrder) O).Customer, 1);
-                       }
-                   }
-                   else if(ch instanceof SMS)
-                   {
-                       String s = inMemory.persons.get(((simpleOrder) O).Customer).mobileNumber;
-                       if (inMemory.mostUsedPhone.containsKey(s)) {
-                           int x = inMemory.mostUsedPhone.get(s);
-                           inMemory.mostUsedPhone.put(s, ++x);
-                           inMemory.mostUsedPhoneAndEmail.put(s, ++x);
-                       }
-                       else {
-                           inMemory.mostUsedPhone.put(s, 1);
-                           inMemory.mostUsedPhoneAndEmail.put(s, 1);
-                       }
-                   }
-               }
-               else if(O instanceof compoundOrder)
-               {
-                   for(int i = 0; i < ((compoundOrder) O).Orders.size(); i++)
-                   {
-                       Channel ch = new Email();
-                       if(ch instanceof Email)
-                       {
-                           if (inMemory.mostUsedEmail.containsKey(((compoundOrder) O).Orders.get(i).Customer)) {
-                               int x = inMemory.mostUsedEmail.get(((compoundOrder) O).Orders.get(i).Customer);
-                               inMemory.mostUsedEmail.put(((compoundOrder) O).Orders.get(i).Customer, ++x);
-                               inMemory.mostUsedPhoneAndEmail.put(((compoundOrder) O).Orders.get(i).Customer, ++x);
-                           }
-                           else {
-                               inMemory.mostUsedEmail.put(((compoundOrder) O).Orders.get(i).Customer, 1);
-                               inMemory.mostUsedPhoneAndEmail.put(((compoundOrder) O).Orders.get(i).Customer, 1);
-                           }
-                       }
-                       else if(ch instanceof SMS)
-                       {
-                           String s = inMemory.persons.get(((compoundOrder) O).Orders.get(i).Customer).mobileNumber;
-                           if (inMemory.mostUsedPhone.containsKey(s)) {
-                               int x = inMemory.mostUsedPhone.get(s);
-                               inMemory.mostUsedPhone.put(s, ++x);
-                               inMemory.mostUsedPhoneAndEmail.put(s, ++x);
-                           }
-                           else {
-                               inMemory.mostUsedPhone.put(s, 1);
-                               inMemory.mostUsedPhoneAndEmail.put(s, 1);
-                           }
-                       }
-                   }
-               }
+               O.calcFee(startFee);
+               // deduct fee if sufficient
+               if (simpleOrder.class.isAssignableFrom(O.getClass()) ){
+                  simpleOrder order = (simpleOrder) O;
+                  if(!simpleServ.deductCost(order,O.shippingFees)){
+                      return "not sufficient balance";
+                  }
+                  // increase EMAIL_or_SMS counter
+                  userServ.SendShippingNotifications(order);
+              }
+               else{
+                  compoundOrder order = (compoundOrder) O;
+                  if(!compServ.deductCost(order, true)){
+                      return "not sufficient balance";
+                  }
+                  // increase EMAIL_or_SMS counter
+                  userServ.SendShippingNotifications(order);
+
+              }
+               // SET shipping DAte
+                O.shipmentDate = Instant.now().toEpochMilli();
+               // increase SHIPPING counter
+               inMemory.MostUsedTemplate.compute("SHIPPING",(key, value) -> value + 1);
+
+
+
+               // TODO: GENERATE notifications
+                // UPDATe shipping order Id
+              O.ID = "SHIP_"+(inMemory.shippingOrders.size()+1)+O.ID ;
+                // SAVE IN DATABASE
+              inMemory.shippingOrders.put(O.ID,O);
+              inMemory.Orders.remove(ID);
+
+
                return "Order Added successfully ";
 
 
           }
           return "This order is not found! ";
+    }
+    public ArrayList<Order> getAllShippingOrders(){
+        return new ArrayList<>(inMemory.shippingOrders.values()) ;
+    }
+    public boolean cancelShippingOrder(String OID) {
+        // shipping simple
+        // shipping compound
+
+        Order order = null;
+        if (inMemory.shippingOrders.containsKey(OID)) {
+            order = inMemory.shippingOrders.get(OID);
+            if (order != null) {
+                if ((Instant.now().toEpochMilli()-order.shipmentDate) <= shippingMaxDuration) {
+                    if (order instanceof simpleOrder) {
+                        simpleServ.refundCost((simpleOrder) order, order.Cost + order.shippingFees);
+                    } else {
+                        compServ.refundCost((compoundOrder) order, true);
+                    }
+                    inMemory.shippingOrders.remove(OID);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
 }

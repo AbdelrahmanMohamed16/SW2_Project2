@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Order;
+import com.example.demo.model.Response;
 import com.example.demo.model.simpleOrder;
 import com.example.demo.model.compoundOrder;
 import com.example.demo.service.*;
@@ -14,8 +15,8 @@ public class compoundOrderController {
     compoundOrderService orderService;
 
     @PostMapping("/compoundOrder")
-    public Order placeOrder(@RequestBody compoundOrder o) {
-        Order res = orderService.placeOrder(o) ;
+    public Response placeOrder(@RequestBody compoundOrder o) {
+        Response res = orderService.placeOrder(o) ;
         return res ;
     }
 
@@ -27,5 +28,4 @@ public class compoundOrderController {
         }
         return null;
     }
-
 }

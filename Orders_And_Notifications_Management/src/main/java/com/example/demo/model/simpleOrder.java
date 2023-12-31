@@ -3,6 +3,7 @@ package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,10 @@ public class simpleOrder extends Order  {
             sum += Products.get(i).getPrice();
         }
         return Cost =  sum ;
+    }
+    @Override
+    public double calcFee(double start){
+        return shippingFees = Products.size()+start ;
     }
     public boolean addProduct(Product o) {
         if(o != null) {

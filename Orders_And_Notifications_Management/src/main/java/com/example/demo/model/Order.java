@@ -1,5 +1,6 @@
 package com.example.demo.model ;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -22,7 +23,8 @@ public abstract class  Order {
     //public double getCost() {return this.Cost;}
    // public double getshippingFees() {return this.shippingFees;}
     //public String getID() {return this.ID;}
-
+    abstract public double calcFee(double start);
+    @JsonIgnore
     public String getID() {return this.ID;}
 
 }

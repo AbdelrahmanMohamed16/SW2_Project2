@@ -1,7 +1,15 @@
 package com.example.demo.model;
 
 import com.example.demo.Repo.inMemory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+    import java.io.IOException;
+    import com.fasterxml.jackson.databind.JsonNode;
+    import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import java.io.IOException;
 
 public class User {
 //    @JsonProperty("ID")
@@ -21,6 +29,9 @@ public class User {
 
     @JsonProperty("Language")
     public String Language;
+
+    @JsonProperty("Channel")
+    public String channel;
 
     @JsonProperty("Password")
     private String Password;
@@ -88,5 +99,6 @@ public class User {
     private String getPassword() {
         return Password;
     }
+
 
 }

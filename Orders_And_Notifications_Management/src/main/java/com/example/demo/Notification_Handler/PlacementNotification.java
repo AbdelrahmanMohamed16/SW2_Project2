@@ -15,11 +15,11 @@ public class PlacementNotification extends Notification{
     @Override
     public void generateContent(User user, Order order) {
         setSubject("Placement order");
-        if(getLanguage().equals("Arabic")){
+        if(getLanguage().equalsIgnoreCase("Arabic")){
             contentGenerator = new ArabicPlacementContent();
             setContent(contentGenerator.getContent(user , order));
         }
-        else if(getLanguage().equals("English")){
+        else if(getLanguage().equalsIgnoreCase("English")){
             contentGenerator = new EnglishPlacementContent();
             setContent(contentGenerator.getContent(user , order));
         }

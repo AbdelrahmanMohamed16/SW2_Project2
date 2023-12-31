@@ -1,19 +1,25 @@
 package com.example.demo.service;
 
+import com.example.demo.Notification_Handler.Notification;
+import com.example.demo.Notification_Handler.PlacementNotification;
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class compoundOrderService {
+    @Autowired
+    public UserService userServ;
 
-    public Order placeOrder(compoundOrder order){
+    public Response placeOrder(compoundOrder order){
+        Response response = new Response();
             if(order != null) {
                 // SET ID
                 order.setID(Integer.toString(inMemory.Orders.size() + 1));
                 // calc cost of Order till Now
-                // TODO: if simple orders add each order added i
+                //  if simple orders add each order added i
                 if(order.Orders != null){
                     simpleOrderService serv = new simpleOrderService();
                     String ID ;
@@ -28,8 +34,9 @@ public class compoundOrderService {
                         }
                         if (i == 0 && !u.isLoggedUser) {
                             // check first User is logged in
-                            System.out.println("not logged");
-                            return null;
+                            response.setStatus(false);
+                            response.setMessage("User Not Logged");
+                            return response;
                         }
                         serv.BuildOrder(order.Orders.get(i));
                         ID = (i + 1) + order.ID;
@@ -42,43 +49,23 @@ public class compoundOrderService {
 
                 // TODO: deduct cost from each User order
                 if(!deductCost(order,false)){
-                    System.out.println("low balance");
-                    return null;
+                    response.setStatus(false);
+                    response.setMessage("low balance");
+                    return response;
                 }
 
+
+                // TODO:Build Notification
+                // count each order User email or Phone
+                userServ.SendPlacingNotifications(order);
+                inMemory.MostUsedTemplate.compute("PLACED",(key, value) -> value + 1);
                 // add to Repo
                 inMemory.Orders.put(order.ID, order);
                 // return Order again
-                for(int i = 0 ; i <order.Orders.size();i++)
-                {
-                    Channel ch = new Email();
-                    if(ch instanceof Email)
-                    {
-                        if (inMemory.mostUsedEmail.containsKey(order.Orders.get(i).Customer)) {
-                            int x = inMemory.mostUsedEmail.get(order.Orders.get(i).Customer);
-                            inMemory.mostUsedEmail.put(order.Orders.get(i).Customer, ++x);
-                            inMemory.mostUsedPhoneAndEmail.put(order.Orders.get(i).Customer, ++x);
-                        }
-                        else {
-                            inMemory.mostUsedEmail.put(order.Orders.get(i).Customer, 1);
-                            inMemory.mostUsedPhoneAndEmail.put(order.Orders.get(i).Customer, 1);
-                        }
-                    }
-                    else if(ch instanceof SMS)
-                    {
-                        String s = inMemory.persons.get(order.Orders.get(i).Customer).mobileNumber;
-                        if (inMemory.mostUsedPhone.containsKey(s)) {
-                            int x = inMemory.mostUsedPhone.get(s);
-                            inMemory.mostUsedPhone.put(s, ++x);
-                            inMemory.mostUsedPhoneAndEmail.put(s, ++x);
-                        }
-                        else {
-                            inMemory.mostUsedPhone.put(s, 1);
-                            inMemory.mostUsedPhoneAndEmail.put(s, 1);
-                        }
-                    }
-                }
-                return order;
+                response.setStatus(true);
+                response.setMessage("PLaced Successfully");
+                response.setData(order);
+                return response;
             }
 
         System.out.println("default line 53");
@@ -108,11 +95,11 @@ public class compoundOrderService {
         }
         return o;
     }
-    static public boolean deductCost(compoundOrder order, boolean isShipping) {
+    public boolean deductCost(compoundOrder order, boolean isShipping) {
         simpleOrderService serv = new simpleOrderService();
         for (int i = 0; i < order.Orders.size(); i++) {
                 if(isShipping){
-                    if(!serv.deductCost(order.Orders.get(i),order.shippingFees)){
+                    if(!serv.deductCost(order.Orders.get(i),order.Orders.get(i).shippingFees)){
                         return false;
                     }
                 }
@@ -124,11 +111,11 @@ public class compoundOrderService {
         }
         return true;
     }
-    static public boolean refundCost(compoundOrder order, boolean isShipping) {
+    public boolean refundCost(compoundOrder order, boolean isShipping) {
         simpleOrderService serv = new simpleOrderService();
         for (int i = 0; i < order.Orders.size(); i++) {
             if(isShipping){
-                serv.refundCost(order.Orders.get(i),order.Orders.get(i).Cost+order.shippingFees);
+                serv.refundCost(order.Orders.get(i),order.Orders.get(i).Cost+order.Orders.get(i).shippingFees);
             }
             else{
                 serv.refundCost(order.Orders.get(i),order.Orders.get(i).Cost);

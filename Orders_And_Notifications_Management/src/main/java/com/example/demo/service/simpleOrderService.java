@@ -1,75 +1,70 @@
 package com.example.demo.service;
 import com.example.demo.Repo.inMemory;
 import com.example.demo.model.*;
+import com.example.demo.Notification_Handler.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-
 
 @Service
 public class simpleOrderService {
     @Value("${shipping.maxDuration}")
     public long shippingMaxDuration;
+    @Autowired
+    public compoundOrderService compServ;
+    @Autowired
+    public UserService userServ;
 
-    public Order placeOrder(simpleOrder order){
+    public Response placeOrder(simpleOrder order){
+        Response response = new Response();
         if(order!=null){
             // check if User exist
             User u = getOrderUser(order);
 
             if( u == null){
-                return null;
+                response.setStatus(false);
+                response.setMessage("User Not Found");
+                return response;
             }
             // check if already Logged in User
             if(!u.isLoggedUser){
-                return null;
+                response.setStatus(false);
+                response.setMessage("User Not Logged In");
+                return response;
             }
             // check if all products exist and retrieve them
-            if(BuildOrder(order) == null) return null;
+            if(BuildOrder(order) == null){
+                response.setStatus(false);
+                response.setMessage("Products Not Found");
+                return response;
+            }
             // SET ID
             order.setID(Integer.toString(inMemory.Orders.size()+1));
             // calc cost of Order till Now
             double orderCost  = order.calcCost();
-            // TODO: deduct cost by check if user has a sufficient balance
+            // deduct cost by check if user has a sufficient balance
             if(!deductCost(order,orderCost)){
-                return null;
+                response.setStatus(false);
+                response.setMessage("low Balance");
+                return response;
             }
             // balance deducted well ... Continue
+
+            // TODO: BUILD Notifications
+            userServ.SendPlacingNotifications(order);
+            inMemory.MostUsedTemplate.compute("PLACED",(key, value) -> value + 1);
+
             // add to Repo
             inMemory.Orders.put(order.ID, order);
             // return Order again
-            Channel ch = new Email();
-            if(ch instanceof Email)
-            {
-                if (inMemory.mostUsedEmail.containsKey(order.Customer)) {
-                    int x = inMemory.mostUsedEmail.get(order.Customer);
-                    inMemory.mostUsedEmail.put(order.Customer, ++x);
-                    inMemory.mostUsedPhoneAndEmail.put(order.Customer, ++x);
-                }
-                else {
-                    inMemory.mostUsedEmail.put(order.Customer, 1);
-                    inMemory.mostUsedPhoneAndEmail.put(order.Customer, 1);
-                }
-            }
-            else if(ch instanceof SMS)
-            {
-                String s = inMemory.persons.get(order.Customer).mobileNumber;
-                if (inMemory.mostUsedPhone.containsKey(s)) {
-                    int x = inMemory.mostUsedPhone.get(s);
-                    inMemory.mostUsedPhone.put(s, ++x);
-                    inMemory.mostUsedPhoneAndEmail.put(s, ++x);
-                }
-                else {
-                    inMemory.mostUsedPhone.put(s, 1);
-                    inMemory.mostUsedPhoneAndEmail.put(s, 1);
-                }
-            }
-            return order;
+            response.setStatus(true);
+            response.setMessage("Order placed Successfully");
+            response.setData(order);
+            return response;
         }
         return null;
     }
@@ -81,13 +76,15 @@ public class simpleOrderService {
         Product p = inMemory.Products.get(pID);
         if(p == null) return false;
 
-        if(((simpleOrder)o).addProduct(p)){
-            // added well
-            if(deductCost((simpleOrder)o,p.getPrice())){
-                o.calcCost();
-                return true;
-            }
 
+
+        if(p.quantity != 0 && deductCost((simpleOrder)o,p.getPrice())){
+            ((simpleOrder)o).addProduct(p);
+            p.quantity--;
+            p.getCat().setRemainingParts(p.getCat().getRemainingParts()-1);
+            System.out.println("find product");
+            o.calcCost();
+            return true;
         }
         return false;
     }
@@ -102,6 +99,8 @@ public class simpleOrderService {
         if(((simpleOrder)o).removeProduct(p)){
             // added well
             refundCost((simpleOrder)o,p.getPrice());
+            p.quantity++;
+            p.getCat().setRemainingParts(p.getCat().getRemainingParts()+1);
             o.calcCost();
             return true;
         }
@@ -120,7 +119,7 @@ public class simpleOrderService {
             return false;
         }
     }
-    public boolean refundCost(simpleOrder order,double Money) {
+    public boolean refundCost(simpleOrder order, double Money) {
         User u = getOrderUser(order);
         u.Balance += Money;
         return true;
@@ -134,11 +133,18 @@ public class simpleOrderService {
             int n_product = order.Products.size();
             ArrayList<Product> temp = new ArrayList<>();
             for (int i = 0; i < n_product ; i++) {
-                System.out.println("find product");
                 if( inMemory.Products.containsKey(order.Products.get(i).getSerialNumber())){
                     Product p = inMemory.Products.get(order.Products.get(i).getSerialNumber());
-                    temp.add(p);
-                    System.out.println("find product");
+                    if(p.quantity != 0){
+                        p.quantity--;
+                        p.getCat().setRemainingParts(p.getCat().getRemainingParts()-1);
+                        temp.add(p);
+                        System.out.println("find product");
+                    }
+                    else {
+                        System.out.println("Product has no stock");
+                    }
+
                 }
                 else{
                     // not found product
@@ -172,35 +178,12 @@ public class simpleOrderService {
                     refundCost((simpleOrder) order , order.Cost);
                 }
                 else{
-                    compoundOrderService.refundCost((compoundOrder) order , false);
+                    compServ.refundCost((compoundOrder) order , false);
                 }
                 inMemory.Orders.remove(OID);
                 return true;
             }
         }
         return false;
-    }
-    public boolean cancelShippingOrder(String OID) {
-        // shipping simple
-        // shipping compound
-        Order order = null;
-        if (inMemory.shippingOrders.containsKey(OID)) {
-            order = inMemory.shippingOrders.get(OID);
-            if (order != null) {
-                if ((order.shipmentDate - Instant.now().toEpochMilli()) <= shippingMaxDuration) {
-                    if (order instanceof simpleOrder) {
-                        refundCost((simpleOrder) order, order.Cost + order.shippingFees);
-                    } else {
-                        compoundOrderService.refundCost((compoundOrder) order, true);
-                    }
-                    inMemory.shippingOrders.remove(OID);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public User checkOrderCustomer(simpleOrder order){
-        return inMemory.persons.get(order.Customer);
     }
 }

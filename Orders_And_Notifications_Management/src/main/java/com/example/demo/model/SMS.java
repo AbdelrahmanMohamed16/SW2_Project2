@@ -6,7 +6,7 @@ public class SMS implements Channel{
     public String getReceiver() {
         return receiver;
     }
-
+    @Override
     public void setReceiver(String receiver) {
         this.receiver = receiver;
     }

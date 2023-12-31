@@ -33,8 +33,11 @@ public class    UserController {
         }
     }
 
-    @GetMapping("/login/{email}")
-    public Response login(@PathVariable("email") String email, @RequestBody String password) {
+    @GetMapping("/login")
+    public Response login(@RequestBody Map<String, Object> jsonMap) {
+        String email = (String) jsonMap.get("email");
+        String password = (String) jsonMap.get("password");
+
         User acc = new User();
         acc = userService.checkUserExist(email);
         Response response = new Response();

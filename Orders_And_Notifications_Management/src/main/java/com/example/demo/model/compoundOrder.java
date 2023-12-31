@@ -34,6 +34,15 @@ public class compoundOrder extends Order {
         }
         return Cost =  sum ;
     }
+    @Override
+    public double calcFee(double start){
+        double sum = 0 ;
+        double feePerOrder = start/Orders.size();
+        for (int i = 0; i < Orders.size(); i++) {
+            sum += Orders.get(i).calcFee(feePerOrder);
+        }
+        return shippingFees =  sum ;
+    }
 
     @Override
     public boolean addOrder(Order o) {
