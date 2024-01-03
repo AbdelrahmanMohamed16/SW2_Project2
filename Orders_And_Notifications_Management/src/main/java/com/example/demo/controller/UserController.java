@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.Repo.inMemory;
 import com.example.demo.model.Response;
 import com.example.demo.model.User;
-import com.example.demo.service.UserService;
+import com.example.demo.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-public class UserController {
+public class    UserController {
 
     @Autowired
     UserService userService = new UserService();
@@ -33,8 +32,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/login/{email}")
-    public Response login(@PathVariable("email") String email, @RequestBody String password) {
+    @GetMapping("/login")
+    public Response login(@RequestBody Map<String, Object> jsonMap) {
+        String email = (String) jsonMap.get("email");
+        String password = (String) jsonMap.get("password");
+
         User acc = new User();
         acc = userService.checkUserExist(email);
         Response response = new Response();

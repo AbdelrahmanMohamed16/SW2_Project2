@@ -1,9 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Order;
-import com.example.demo.model.compoundOrder;
+import com.example.demo.model.Response;
 import com.example.demo.model.simpleOrder;
-import com.example.demo.service.compoundOrderService;
+import com.example.demo.model.compoundOrder;
+import com.example.demo.service.Order.compoundOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,8 @@ public class compoundOrderController {
     compoundOrderService orderService;
 
     @PostMapping("/compoundOrder")
-    public Order placeOrder() {
-        Order res = orderService.placeOrder() ;
+    public Response placeOrder(@RequestBody compoundOrder o) {
+        Response res = orderService.placeOrder(o) ;
         return res ;
     }
 
@@ -27,5 +28,4 @@ public class compoundOrderController {
         }
         return null;
     }
-
 }
